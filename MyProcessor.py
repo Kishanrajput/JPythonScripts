@@ -47,6 +47,18 @@ class MyProcessor(jana.JEventProcessor):
 		# time.sleep(20)
 		# model = tf.keras.models.load_model('MNISTmodel')
 		# predictions = self.model.predict(data[self.counter:self.counter+20])
+		gpus = tf.config.experimental.list_physical_devices('GPU')
+		if gpus:
+			# Restrict TensorFlow to only use the first GPU
+			try:
+				tf.config.experimental.set_visible_devices(gpus[0], 'GPU')
+				logical_gpus = tf.config.experimental.list_logical_devices('GPU')
+				print(len(gpus), "Physical GPUs,", len(logical_gpus), "Logical GPU")
+			except:
+				print("Error")
+		else:
+			print("No GPU")
+			
 		step = 10000
 		if self.counter > 50000:
 			print("Processing time: ", time.time()-self.start_time)
@@ -59,19 +71,6 @@ class MyProcessor(jana.JEventProcessor):
 			print(np.argmax(predictions[i]), l[i])
 		# # # print(predictions, l)
 		self.counter += step
-
-
-		gpus = tf.config.experimental.list_physical_devices('GPU')
-		if gpus:
-			# Restrict TensorFlow to only use the first GPU
-			try:
-				tf.config.experimental.set_visible_devices(gpus[0], 'GPU')
-				logical_gpus = tf.config.experimental.list_logical_devices('GPU')
-				print(len(gpus), "Physical GPUs,", len(logical_gpus), "Logical GPU")
-			except:
-				print("Error")
-		else:
-			print("No GPU")
 		
 		# # 	print(l[i])
 		
