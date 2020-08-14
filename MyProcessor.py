@@ -21,7 +21,7 @@ class MyProcessor(jana.JEventProcessor):
 	def Init( self ):
 		print('Python Init called')
 		self.data, self.labels = pm.loadImages('Data/')
-		self.model = pm.loadKerasModel('MNISTmodel')
+		self.model = tf.keras.models.load_model('MNISTmodel2')
 		self.counter = 0
 		# self.predictions = []
 		self.start_time = time.time()
@@ -31,7 +31,7 @@ class MyProcessor(jana.JEventProcessor):
 		if gpus:
 			# Restrict TensorFlow to only use the first GPU
 			try:
-				tf.config.experimental.set_visible_devices(gpus[0], 'GPU')
+				tf.config.experimental.set_visible_devices(gpus, 'GPU')
 				logical_gpus = tf.config.experimental.list_logical_devices('GPU')
 				print(len(gpus), "Physical GPUs,", len(logical_gpus), "Logical GPU")
 			except:
@@ -69,13 +69,13 @@ class MyProcessor(jana.JEventProcessor):
 		# d = self.data[self.counter:self.counter+step]
 		predictions = self.model.predict(self.data[self.counter:self.counter+step])
 		# # # self.predictions.append(predictions)
-		for i in range(len(predictions)):
-			print(np.argmax(predictions[i]), l[i])
+		#for i in range(len(predictions)):	
+		#	print(np.argmax(predictions[i]), l[i])
 		# # # print(predictions, l)
 		self.counter += step
 		
 		# # 	print(l[i])
-		
+		print(predictions)
 		print(self.counter)
 
 	def Finish( self ):
@@ -88,14 +88,17 @@ class MyProcessor(jana.JEventProcessor):
 #-----------------------------------------------------------
 
 jana.SetParameterValue( 'JANA:DEBUG_PLUGIN_LOADING', '1')
-jana.SetParameterValue( 'NTHREADS', '4')
+jana.SetParameterValue( 'NTHREADS', '1')
 jana.SetParameterValue( 'NEVENTS', '100')
 
 # The janapy module itself serves as the JApplication facade
 jana.AddProcessor( MyProcessor() )
 
-jana.AddPlugin('jtest')
+jana.AddPlugin('JTest')
 jana.Run()
-
+#m = MyProcessor()
+#m.Init()
+#m.Process()
+#m.Finish()
 print('PYTHON DONE.')
 
